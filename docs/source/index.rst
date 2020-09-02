@@ -1,13 +1,14 @@
-*******************************************
-Fragalysis Stack Orchestration (Kubernetes)
-*******************************************
+#############################
+Fragalysis Stack (Kubernetes)
+#############################
+
+..  image:: images/frag-travis/frag-travis.011.png
 
 ..  toctree::
     :maxdepth: 2
-    :caption: Contents
+    :caption: Container Images
 
-    development
-    deployment
-    rancher
-    demo-cluster
-    dummies-dev-setup
+    cluster-prep/index
+    architecture/index
+    development/index
+    administration/index
