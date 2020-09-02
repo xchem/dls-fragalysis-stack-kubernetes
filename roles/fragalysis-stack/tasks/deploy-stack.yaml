@@ -52,18 +52,9 @@
 
   when: s_result.resources|length == 0
 
-# ISPyB secrets...
+# ISPyB secrets... (if defined and not set to 'SetMe')
 
-- name: Check ISPyB secrets
-  k8s_info:
-    kind: Secret
-    api_version: v1
-    namespace: "{{ stack_namespace }}"
-    name: ispyb
-  register: s_result
-
-- name: Set (new) ISPyB secrets
-  block:
+- block:
 
   # These variables are in a vault file.
   # Make sure they exist.
@@ -88,20 +79,44 @@
       definition: "{{ lookup('template', 'secret-ispyb.yaml.j2') }}"
       wait: yes
 
-  when: s_result.resources|length == 0
+  when:
+  - stack_ispyb_host is defined
+  - stack_ispyb_host|string != 'SetMe'
 
-# xchem secrets...
+# App (ssh) secrets... (if defined and not set to 'SetMe')
 
-- name: Check xchem secrets
-  k8s_info:
-    kind: Secret
-    api_version: v1
-    namespace: "{{ stack_namespace }}"
-    name: xchem
-  register: s_result
+- block:
 
-- name: Set (new) xchem secrets
-  block:
+  # These variables are in a vault file.
+  # Make sure they exist.
+
+  - name: Assert xchem secrets are defined
+    assert:
+      that:
+      - stack_ssh_host is defined
+      - stack_ssh_user is defined
+      - stack_ssh_password is defined
+      - stack_security_connector is defined
+
+  - name: Set ssh secret facts
+    set_fact:
+      stack_ssh_host_fact: '{{ stack_ssh_host }}'
+      stack_ssh_user_fact: '{{ stack_ssh_user }}'
+      stack_ssh_password_fact: '{{ stack_ssh_password }}'
+      stack_security_connector_fact: '{{ stack_security_connector }}'
+
+  - name: Write ssh secrets
+    k8s:
+      definition: "{{ lookup('template', 'secret-ssh.yaml.j2') }}"
+      wait: yes
+
+  when:
+  - stack_ssh_host is defined
+  - stack_ssh_host|string != 'SetMe'
+
+# xchem secrets... (if defined and not set to 'SetMe')
+
+- block:
 
   # These variables are in a vault file.
   # Make sure they exist.
@@ -128,7 +143,9 @@
       definition: "{{ lookup('template', 'secret-xchem.yaml.j2') }}"
       wait: yes
 
-  when: s_result.resources|length == 0
+  when:
+  - stack_xchem_host is defined
+  - stack_xchem_host|string != 'SetMe'
 
 # Now the stack, its service and ingress
 # and give the user their stack URL.

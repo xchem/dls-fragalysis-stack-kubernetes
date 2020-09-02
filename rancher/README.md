@@ -1,10 +1,11 @@
 # Rancher
 Material to configure the RKE-based xchem Rancher deployment.
+
 Here we rely on a Kubernetes cluster based on instances created in the
 `xchem-follow-up` STFC project.
 
 -   Currently the instances are created using the **OpenStack** console
-    (multiple etcd, single control-plane instance and a single worker)
+    (multiple etcd, single control-plane and worker instances)
 -   **RKE** is used to deploy Kubernetes to the compute instances
     using a simple `cluster.yml` configuration file (enclosed) - as
     described on the Rancher site
@@ -33,10 +34,20 @@ Essentially, the high-level stages consist of...
     to resolve to the application node).
 
 ### Installing rke
-TBD
+Follow the instructions at [installing rke] to install `rke`, after which
+you should be able to run: -
+
+    $ rke --version
+    rke version 1.0.8
 
 ### Installing kubectl
-TBD
+Follow instructions at [installing kubectl] to install the `kubectl` client,
+after which you should be abel to run: -
+
+    $ kubectl version --client --short
+    Client Version: v1.18.0
+    
+>   Ensure you are using kubectl 1.18 or better.
 
 ### Installing helm
 For reference refer to the [installing Helm] documentation.
@@ -54,17 +65,17 @@ AWS credentials.
 
 ### Creating compute instances
 We create instances using the STFC OpenStack console. We create 3
-**etcd** nodes and a single, _combined_ control and worker node.
+**etcd** nodes, dual control plane nodes and one or more worker nodes.
 
 Instances details: -
 
 -   **etcd** is `m1.large` (2-core 8Gi RAM)
 -   **control plane** is `c1.large` (2-core 8Gi RAM)
 -   **worker** is `c1.large` (2-core 8Gi RAM)
--   Bas image for all is `ScienbtificLinux-7-NoGui`
+-   Base image for all is `ScienbtificLinux-7-NoGui`
 
 >   The control-plane and worker have publicly-accessible Floating IPs attached
-    and it's these IP that's used in the `cluster.yml` we create for
+    and it's these IPs that are used in the `cluster.yml` we create for
     installing **rke**.
 
 With the instances created we run our `site-rke.yaml` playbook
@@ -94,7 +105,16 @@ Create the `cluster.yml` and then install Kubernetes...
 >   As we've used a public IP for the control-plane the generated
     `kube_config_cluster.yml` should be useful outside the
     STFC cluster.
- 
+
+#### Adding worker nodes
+You can add new worker nodes by editing the `cluster.yml`, ensuring you've run
+the `site-rke` playbook in our `ansible-infratstructure` project and then
+using `rke`: -
+
+    $ rke up --update-only
+
+For details refer to the [update] documentation.
+
 ### Install rancher (using helm)
 As we have direct access to the Internet from the cluster
 we can follow the main [install Rancher] instructions, which is
@@ -140,5 +160,8 @@ importantly, set the initial administrator password
 
 ---
 
+[installing rke]: https://rancher.com/docs/rke/latest/en/installation/#download-the-rke-binary
+[installing kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [installing helm]: https://helm.sh/docs/intro/install/
 [install rancher]: https://rancher.com/docs/rancher/v2.x/en/installation/k8s-install/helm-rancher/
+[update]: https://rancher.com/docs/rke/latest/en/managing-clusters/

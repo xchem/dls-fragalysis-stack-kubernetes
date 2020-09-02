@@ -4,13 +4,18 @@ Galaxy Role.
 
 These vault files, one for each cluster, configure an AWX instance
 for that cluster. For example, `config-xchem-developer` is intended to be used
-with the developer cluster.
+with the developer cluster. It provides initial configuration of the cluster
+with common and generic developer Job Templates. It doe not provide
+developer-specific Job Templates.
 
 >   The `config-demo` file is used for demonstrations.
 
 Each vault contains a `tower` map variable that describes
 the desired initial state of the corresponding AWX server, relying on
 Ansible, the tower-cli and Ansible Galaxy roles and collections.
+
+A special unencrypted file exists to act as a basis for a *basic* installation
+(`config-basic-template.yaml`).
 
 ## Preparation
 You **MUST** provide AWS credentials (typically allowing AWS S3
@@ -32,13 +37,13 @@ configuration, encrypted with different vault passwords.
 Armed with the appropriate configuration's vault key, from the project root,
 first check your _encrypted_ developer cluster configuration is as required: -
 
-    $ CONFIG_NAME=xchem-developer
-    $ ansible-vault edit awx-configuration/config-$CONFIG_NAME.vault
+    CONFIG_NAME=xchem-developer
+    ansible-vault edit awx-configuration/config-$CONFIG_NAME.vault
 
 And then configure the AWX server for the developer cluster by running
 the following, providing the vault password when prompted: -
 
-    $ ansible localhost \
+    ansible localhost \
         -m include_role -a name=informaticsmatters.awx_composer \
         -e @awx-configuration/config-$CONFIG_NAME.vault \
         --ask-vault-pass
