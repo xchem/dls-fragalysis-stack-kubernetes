@@ -9,6 +9,13 @@ stack_image_tag: latest
 stack_replicas: 2
 # Deploy the nery service?
 stack_deploy_nery: no
+# Include the 'sensitive.yaml' file?
+# This includes sensitive preset variables employed at Diamond.
+stack_include_sensitive: yes
+
+# We also use BusyBox as an init-container
+# so we need to allow redirection of its registry.
+busybox_image_registry: docker.io
 
 # A boolean, set if the stack deployment is for a developer
 # i.e. not a PRODUCTION deployment.

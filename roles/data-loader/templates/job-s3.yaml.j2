@@ -2,6 +2,9 @@
 
 # Template for the AWS S3 Fragalysis Media Loader.
 # A loader that expects the source data in an S3 bucket.
+#
+# The S3 loader is part of the xchem/fragalysis-loader repository
+# and is built there.
 
 apiVersion: batch/v1
 kind: Job
@@ -33,6 +36,11 @@ spec:
                 values:
                 - {{ loader_node_purpose }}
 
+{% if all_image_preset_pullsecret_name|string|length > 0 %}
+      imagePullSecrets:
+      - name: {{ all_image_preset_pullsecret_name }}
+{% endif %}
+
       containers:
       - name: s3-loader
         image: '{{ loader_s3_image_registry }}/{{ loader_s3_image }}:{{ loader_s3_image_tag }}'
@@ -55,7 +63,7 @@ spec:
               name: loader
               key: aws_secret_access_key
         - name: BUCKET_NAME
-          value: '{{ loader_bucket_name }}'
+          value: '{{ loader_s3_bucket_name }}'
         - name: DATA_ORIGIN
           value: '{{ loader_data_origin }}'
         # Database credentials

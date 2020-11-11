@@ -16,18 +16,17 @@ services (Infrastructure and Fragalysis Stack) and optional areas that cover
     revision updates as the Stack's development is a continuous and
     on-going process. Most other images are unlikely to change often.
 
-*********************
-Core (Infrastructure)
-*********************
+*******************
+Infrastructure Core
+*******************
+
+These images provide certificate generation, the NGINX ingress controller
+and an AWS EFS volume provisioner.
 
 +-------------------------------------------------------------------+---------------+
 | Container Image                                                   | Tag           |
 +===================================================================+===============+
-| ansible/awx                                                       | 13.0.0        |
-+-------------------------------------------------------------------+---------------+
-| jettech/kube-webhook-certgen                                      | v1.2.0        |
-+-------------------------------------------------------------------+---------------+
-| postgres                                                          | 12.2          |
+| docker.io/jettech/kube-webhook-certgen                            | v1.2.0        |
 +-------------------------------------------------------------------+---------------+
 | quay.io/jetstack/cert-manager-cainjector                          | v0.12.0       |
 +-------------------------------------------------------------------+---------------+
@@ -37,52 +36,82 @@ Core (Infrastructure)
 +-------------------------------------------------------------------+---------------+
 | quay.io/kubernetes-ingress-controller/nginx-ingress-controller    | 0.33.0        |
 +-------------------------------------------------------------------+---------------+
+| quay.io/external_storage/efs-provisioner                          | v2.4.0        |
++-------------------------------------------------------------------+---------------+
 
-***********************
-Core (Fragalysis Stack)
-***********************
-
-+---------------------------------------+---------------+
-| Container Image                       | Tag           |
-+=======================================+===============+
-| busybox                               | 1.28.0        |
-+---------------------------------------+---------------+
-| informaticsmatters/neo4j              | 3.5           |
-+---------------------------------------+---------------+
-| informaticsmatters/neo4j-s3-loader    | 3.5           |
-+---------------------------------------+---------------+
-| postgres                              | 12.2          |
-+---------------------------------------+---------------+
-| xchem/fragalysis-stack                | 1.0.7 [#f2]_  |
-+---------------------------------------+---------------+
-| xchem/fragalysis-s3-loader            | 1.0.7 [#f2]_  |
-+---------------------------------------+---------------+
-
-******************************
-Backup and Recovery (optional)
-******************************
+**********************************
+Infrastructure Database (Optional)
+**********************************
 
 +---------------------------------------+---------------+
 | Container Image                       | Tag           |
 +=======================================+===============+
-| informaticsmatters/sql-backup         | 2020.4        |
-+---------------------------------------+---------------+
-| informaticsmatters/sql-recovery       | 2020.4        |
+| docker.io/library/postgres            | 12.2          |
 +---------------------------------------+---------------+
 
 *******************
 Keycloak (optional)
 *******************
 
+If installing Keycloak, you must install the Infrastructure Database.
+
 +---------------------------------------+---------------+
 | Container Image                       | Tag           |
 +=======================================+===============+
-| jboss/keycloak                        | 10.0.2        |
+| docker.io/jboss/keycloak              | 11.0.0        |
 +---------------------------------------+---------------+
+
+*****************************
+Infrastructure AWX (Optional)
+*****************************
+
+If installing AWX, you must install the Infrastructure Database.
+
++---------------------------------------+---------------+
+| Container Image                       | Tag           |
++=======================================+===============+
+| docker.io/ansible/awx                 | 13.0.0        |
+| docker.io/library/redis               | latest        |
+| docker.io/library/centos              | 7             |
++---------------------------------------+---------------+
+
+****************
+Fragalysis Stack
+****************
+
+These images are required for a named (tagged) production Fragalysis Stack,
+its own database and S3 data loader. The stack also requires a
+fragmentation database, provided by a specialised neo4j image.
+
++---------------------------------------------------+-----------+
+| Container Image                                   | Tag       |
++===================================================+===========+
+| docker.io/library/busybox                         | 1.28.0    |
++---------------------------------------------------+-----------+
+| docker.io/library/postgres                        | 12.2      |
++---------------------------------------------------+-----------+
+| docker.io/xchem/fragalysis-stack                  | 2.0.4     |
++---------------------------------------------------+-----------+
+| docker.io/informaticsmatters/fragalysis-s3-loader | 2.0.3-1   |
++---------------------------------------------------+-----------+
+| docker.io/informaticsmatters/neo4j                | 3.5.20-1  |
++---------------------------------------------------+-----------+
+| docker.io/informaticsmatters/neo4j-s3-loader      | 3.5.20-1  |
++---------------------------------------------------+-----------+
+
+******************************
+Backup and Recovery (optional)
+******************************
+
++-------------------------------------------+---------------+
+| Container Image                           | Tag           |
++===========================================+===============+
+| docker.io/informaticsmatters/sql-backup   | 2020.4        |
++-------------------------------------------+---------------+
+| docker.io/informaticsmatters/sql-recovery | 2020.4        |
++-------------------------------------------+---------------+
 
 .. rubric:: Footnotes
 
 .. [#f1] This list does not cover container images that would normally be
          considered part of Kubernetes.
-
-.. [#f2] This image version may change prior to deployment.
