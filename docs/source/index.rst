@@ -2,13 +2,13 @@
 Fragalysis Stack (Kubernetes)
 #############################
 
-..  image:: images/frag-travis/frag-travis.011.png
+..  image:: images/frag-actions/frag-actions.011.png
 
 ..  toctree::
     :maxdepth: 2
     :caption: Preparation
 
-    cluster-prep/index
+    installation/index
 
 ..  toctree::
     :maxdepth: 2
@@ -16,6 +16,12 @@ Fragalysis Stack (Kubernetes)
 
     architecture/index
     development/index
+
+..  toctree::
+    :maxdepth: 2
+    :caption: Kubernetes fragmentation process
+
+    fragmentation/index
 
 ..  toctree::
     :maxdepth: 2

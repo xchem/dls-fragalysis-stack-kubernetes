@@ -13,6 +13,11 @@ stack_deploy_nery: no
 # This includes sensitive preset variables employed at Diamond.
 stack_include_sensitive: yes
 
+# The Sentry SDK DSN - passed in via the environment variable
+# 'FRAGALYSIS_BACKEND_SENTRY_DNS'
+# If blank sentry is not initialised.
+stack_backend_sentry_dsn: ''
+
 # We also use BusyBox as an init-container
 # so we need to allow redirection of its registry.
 busybox_image_registry: docker.io
@@ -54,6 +59,22 @@ stack_hostname: ''
 # The name can only consist of lower-case letters.
 stack_name: default
 
+# If integrating with a Discourse server
+# you will need an API key and (optionally) an alternative host.
+# If the host is left unset an internal default may be chosen.
+stack_discourse_api_key: ''
+stack_discourse_host: ''
+
+# This parameter is NOT INTENDED FOR PRODUCTION.
+# In development, multiple Fragalysis instances call a single Discourse instance unexpected duplicates can appear.
+# For example the MPRO target may already exist in Discourse but not in the Fragalyisis database because it has
+# already been inserted by another Fragalysis.
+# This parameter helps to avoid this issue (it can't completely eliminate it), by appending an identifying mark from
+# the calling Fragalysis to the end of category and topic titles. E.g. If you set this to -duncan-local then
+# all your posts to category MPRO will be rerouted to MPRO-duncan-local in Discourse to avoid confusing them with
+# all the other MPRO categories out there.
+stack_discourse_dev_post_suffix: ''
+
 # Build the XChem Database?
 # If 'yes' then you will need to ensure that you provide suitable values for
 # the following variables, used to create the xchem secrets, otherwise the
@@ -72,6 +93,41 @@ stack_build_xcdb: no
 # will be used. You should strive to use a named storage class, e.g. 'efs'.
 stack_media_vol_storageclass: ' '
 
+# When true, this starts the stack in debug mode.
+# It should be False on production.
+stack_debug_fragalysis: no
+
+# Keycloak oidc variables
+# If the secret is defined, the other variables are expected
+# Environment variables in the stack pod are only set up if the secret is defined.
+stack_oidc_rp_client_secret: ''
+stack_oidc_rp_client_id: fragalysis-local
+stack_oidc_keycloak_realm: https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/fragalysis
+
+# Override method to also log user out from Keycloak as well as Django.
+# If desired, this should be set to "fragalysis.views.keycloak_logout"
+stack_oidc_op_logout_url_method: ''
+
+# Email backend variables
+# If stack_email_user is set, then a full email configuration should be defined as follows:
+# e.g. For a gmail configuration
+# stack_email_host: smtp.gmail.com
+# stack_email_use_tls: True
+# stack_email_port: 587
+# stack_email_user: fragalysis@gmail.com
+# stack_email_password: <password>
+#
+# Or for an sftc smtp configutaion
+# stack_email_host: exchsmtp.stfc.ac.uk
+# stack_email_use_tls: False
+# stack_email_port: 25
+# stack_email_user: fragalysis@donotreply.com
+# stack_email_password:
+#
+# Note that in Django if stack_email_password is set, then the stack_email_user will be authenticated,
+# otherwise no authentication takes place, but stack_email_user can be used as the from address.
+stack_email_user: ''
+
 # Variables controlling the deployed database image.
 # Define a database host if a pre-existing database is to be used.
 # If blank a database will be created specifically for the stack.
@@ -84,7 +140,7 @@ database_vol_storageclass: ' '
 
 # Database backups
 database_bu_state: absent
-database_bu_image_tag: '2020.4'
+database_bu_image_tag: 'stable'
 database_bu_vol_storageclass: ' '
 database_bu_vol_size_g: 4
 database_bu_hourly_schedule: '51 * * * *'

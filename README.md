@@ -1,6 +1,7 @@
 # Flexible playbooks for Fragalysis-Stack (Kubernetes)
 
-[![Build Status](https://travis-ci.com/InformaticsMatters/dls-fragalysis-stack-kubernetes.svg?branch=master)](https://travis-ci.com/InformaticsMatters/dls-fragalysis-stack-kubernetes)
+![yamllint and doc build](https://github.com/InformaticsMatters/dls-fragalysis-stack-kubernetes/workflows/lint%20and%20doc%20build/badge.svg)
+
 [![Documentation Status](https://readthedocs.org/projects/im-dls-fragalysis-stack-kubernetes/badge/?version=latest)](https://im-dls-fragalysis-stack-kubernetes.readthedocs.io/en/latest/?badge=latest)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/informaticsmatters/dls-fragalysis-stack-kubernetes)
 
@@ -15,7 +16,10 @@ server.
 You'll need a Python environment where you need to install the project
 requirements (for Python and Ansible): -
 
-    $ conda activate dls-fragalysis-stack-kubernetes
+    $ python -m venv ~/.venv/dls-fragalysis-stack-kubernetes
+    $ source ~/.venv/dls-fragalysis-stack-kubernetes/bin/activate
+    
+    $ pip install --upgrade pip
     $ pip install -r requirements.txt
     $ ansible-galaxy install -r requirements.yaml --force
     $ ansible-galaxy collection install -r collection-requirements.yaml --force
